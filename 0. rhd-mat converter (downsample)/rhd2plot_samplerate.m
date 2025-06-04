@@ -1,4 +1,4 @@
-% convert_rhd_to_mat
+% convert_rhd_to_mat (downsamples if over sampled)
 %   Reads an Intan *.rhd file, extracts amplifier_data → raw_data,
 %   prints the original sampling rate, down‑samples to 1 kHz when needed,
 %   and saves raw_data plus Fs_final into a *.mat with the same base‑name.

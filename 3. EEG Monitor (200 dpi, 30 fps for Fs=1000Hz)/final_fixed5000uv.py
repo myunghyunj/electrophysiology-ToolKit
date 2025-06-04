@@ -1,3 +1,4 @@
+# This .py was implemented in the 'SI: STIM condition' video, in order to harmonically unify the voltage (uV) scale bar (y-axis).
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
