@@ -31,8 +31,9 @@ This toolkit provides a complete pipeline for processing and analyzing EEG recor
 - Statistics and Machine Learning Toolbox
 
 #### Python Requirements
+Install the Python dependencies with:
 ```bash
-pip install numpy matplotlib scipy opencv-python h5py tqdm
+pip install -r requirements.txt
 ```
 
 ### Setup
