@@ -1,4 +1,4 @@
-# tFUS-EEG-ToolKit
+# Electrophysiology (EEG)-ToolKit
 
 [![MATLAB R2018b+](https://img.shields.io/badge/MATLAB-R2018b+-orange.svg)](https://www.mathworks.com/products/matlab.html)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
