@@ -150,7 +150,7 @@ graph TD
 If you use this toolkit in your research, please cite:
 
 ```
-[Your citation here]
+[in preparation]
 ```
 
 ## Acknowledgments
