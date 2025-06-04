@@ -168,7 +168,7 @@ If you use this toolkit in your research, please cite:
 ## Acknowledgments
 
 - Intan RHD file reader based on [Intan Technologies MATLAB file readers](https://www.intantech.com/downloads.html?tabSelect=Software&yPos=0)
-- Developed for chemically induced (stereotaxically administered) tFUS-EEG research at KAIST EE (Daejeon, South Korea).
+- Developed for tFUS-EEG research at KAIST EE (Daejeon, South Korea).
 
 ## License
 
