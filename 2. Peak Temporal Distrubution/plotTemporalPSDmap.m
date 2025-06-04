@@ -1,6 +1,5 @@
 % plotTemporalPSDmap.m
 % Draws the 2-panel time-resolved PSD map with spectrum overlay and saves .png + .fig
-% Also exports raw data to Excel
 %
 % FEATURES:
 % - Stacked bars with z-score spectrum overlay (rainbow colored segments)
@@ -265,28 +264,6 @@ else
     shamSEM = zeros(1, size(shamCountsPerFile, 2));
     shamMeanCounts = shamCountsPerFile; % If only one file, mean is the file itself, SEM is 0
 end
-
-% Export raw data to Excel
-% Create data table for Excel export
-stimData = table();
-stimData.Filename = filenames_STIM(:);
-stimData.Time_min = peakTime_STIM(:)/60;  % Convert to minutes
-stimData.ZScore = z_STIM(:);
-stimData.Condition = repmat({'STIM'}, length(peakTime_STIM), 1);
-
-shamData = table();
-shamData.Filename = filenames_SHAM(:);
-shamData.Time_min = peakTime_SHAM(:)/60;  % Convert to minutes
-shamData.ZScore = z_SHAM(:);
-shamData.Condition = repmat({'SHAM'}, length(peakTime_SHAM), 1);
-
-% Combine all data
-allData = [stimData; shamData];
-
-% Save to Excel
-excelFile = fullfile(outDir, 'Temporal_PSD_RawData.xlsx');
-writetable(allData, excelFile);
-fprintf('Raw data exported to: %s\n', excelFile);
 
 % Calculate KDE smoothing for probability density
 % Create smooth time range for KDE evaluation
