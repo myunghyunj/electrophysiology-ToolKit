@@ -436,7 +436,7 @@ for file_idx = 1:length(filenames)
 
     % Create a 2x3 grid layout
     % --- Subplot 1: Filtered EEG + Tics ---
-    ax1 = subplot(2,3,1);
+    ax1 = subplot(2,2,1);
     plot(t, eeg_plot_filtered, 'k'); hold on;
 
     % Plot all EEG events (Red dots)
@@ -466,7 +466,7 @@ for file_idx = 1:length(filenames)
     text(xl(1) + 0.02*(xl(2)-xl(1)), yl(2) - 0.1*(yl(2)-yl(1)), text_str, 'FontSize', 10, 'Color', 'r', 'FontWeight', 'bold');
 
     % --- Subplot 2: Filtered EMG (Restored) ---
-    ax2 = subplot(2,3,2);
+    ax2 = subplot(2,2,2);
     if has_emg
         plot(t, emg_plot_filtered, 'Color', [0.4 0.4 0.4]);
         title('Filtered EMG (1-100 Hz)');
@@ -480,63 +480,10 @@ for file_idx = 1:length(filenames)
     axis tight; grid on;
     xlabel('Time (s)');
 
-    % --- Subplot 3 (NEW): SNR Histogram ---
-    ax3 = subplot(2,3,3);
-    if ~isempty(EEG_events) && ~isempty(all_snr)
-        has_legend_items = false;
-        
-        hold on;
-        if ~isempty(all_snr)
-            histogram(all_snr, 'BinWidth', 2, 'FaceColor', [0.7 0.7 0.7], 'EdgeColor', [0.3 0.3 0.3], 'DisplayName', 'All Events');
-            has_legend_items = true;
-        end
-        
-        if ~isempty(tp_snr)
-            histogram(tp_snr, 'BinWidth', 2, 'FaceColor', [0 0.4 0.8], 'EdgeColor', [0 0.2 0.6], 'DisplayName', 'True Positives');
-            has_legend_items = true;
-        end
-        
-        if ~isempty(fp_snr)
-            histogram(fp_snr, 'BinWidth', 2, 'FaceColor', [0.8 0.2 0.2], 'EdgeColor', [0.6 0.1 0.1], 'DisplayName', 'False Positives');
-            has_legend_items = true;
-        end
-        hold off;
-        
-        xlabel('SNR (dB)', 'FontWeight', 'bold');
-        ylabel('Number of Events', 'FontWeight', 'bold');
-        title('Distribution of Event Peak SNRs');
-        grid on;
-        
-        if has_legend_items
-            legend('show', 'Location', 'best');
-        end
-        
-        % Add statistical annotations
-        if ~isempty(tp_snr) || ~isempty(fp_snr)
-            yl = ylim;
-            xl = xlim;
-            text_x = xl(1) + 0.05*(xl(2)-xl(1));
-            text_y = yl(2) - 0.1*(yl(2)-yl(1));
-            
-            if ~isempty(tp_snr) && ~isempty(fp_snr)
-                text_stats = sprintf('TP: mean = %.1f dB (n=%d)\nFP: mean = %.1f dB (n=%d)', ...
-                    mean_tp_snr, length(tp_snr), mean_fp_snr, length(fp_snr));
-            elseif ~isempty(tp_snr)
-                text_stats = sprintf('TP: mean = %.1f dB (n=%d)', mean_tp_snr, length(tp_snr));
-            elseif ~isempty(fp_snr)
-                text_stats = sprintf('FP: mean = %.1f dB (n=%d)', mean_fp_snr, length(fp_snr));
-            end
-            
-            text(text_x, text_y, text_stats, 'FontSize', 9, 'FontWeight', 'bold');
-        end
-    else
-        title('Distribution of Event Peak SNRs (No Events)');
-        set(gca, 'Color', [0.95 0.95 0.95]);
-        text(0.5, 0.5, 'No events detected', 'HorizontalAlignment', 'center', 'FontWeight', 'bold');
-    end
+    % --- Subplot 3 (SNR Histogram) REMOVED ---
 
     % --- Subplot 4: Unfiltered EEG Spectrogram ---
-    ax4 = subplot(2,3,4);
+    ax4 = subplot(2,2,3);
     try
         % Validate input signal before spectrogram computation
         if length(eeg) < nfftSpec
@@ -581,7 +528,7 @@ for file_idx = 1:length(filenames)
     end
 
     % --- Subplot 5: Unfiltered EMG Spectrogram (Restored) ---
-    ax5 = subplot(2,3,5);
+    ax5 = subplot(2,2,4);
     if has_emg && ~isempty(emg)
         try
             % Validate input signal before spectrogram computation
@@ -641,120 +588,7 @@ for file_idx = 1:length(filenames)
         axis([0 1 0 1]); % Set standard axis limits for empty plot
     end
     
-    % --- Subplot 6: EEG Band Power Distribution ---
-    subplot(2,3,6);
-    ax6 = gca; % Get current axis handle
-
-    % Initialize variables to avoid undefined references in catch block
-    band_names = {};
-    band_power = [];
-    EEG_band_ratios = struct();
-    
-    try
-        % Calculate EEG frequency bands similar to FFT_psd_histogram_v3.m
-        % Define frequency bands
-        bands = {'Delta', [0.5,4];
-                 'Theta', [4,7]; 
-                 'Alpha', [8,12];
-                 'Beta',  [12,30];
-                 'Gamma', [30,100]};
-        
-        num_bands = size(bands, 1);
-        band_names = bands(:,1);
-        
-        % Calculate power for each band using bandpower function
-        band_power = zeros(1, num_bands);
-        for b = 1:num_bands
-            freq_range = bands{b,2};
-            try
-                band_power(b) = bandpower(eeg, Fs, freq_range);
-            catch band_err
-                % Fallback if bandpower function is not available
-                fprintf('Warning: bandpower function not available, using manual FFT calculation\n');
-                % Manual calculation using FFT
-                L = length(eeg);
-                Y = fft(eeg);
-                P2 = abs(Y/L);
-                P1 = P2(1:floor(L/2)+1);
-                P1(2:end-1) = 2*P1(2:end-1);
-                freq = Fs*(0:(floor(L/2)))/L;
-                
-                % Find indices for this band
-                band_idx = (freq >= freq_range(1)) & (freq <= freq_range(2));
-                band_power(b) = sum(P1(band_idx).^2);
-            end
-        end
-        
-        % Calculate percentages
-        total_power = sum(band_power);
-        if total_power > 0
-            band_percentages = (band_power / total_power) * 100;
-        else
-            band_percentages = zeros(1, num_bands);
-        end
-        
-        % Create side-by-side bar chart with custom colors
-        band_colors = [0.2 0.6 0.8;   % Delta - blue
-                      0.8 0.2 0.2;   % Theta - red
-                      0.2 0.8 0.2;   % Alpha - green
-                      0.8 0.8 0.2;   % Beta - yellow
-                      0.8 0.2 0.8];  % Gamma - purple
-        
-        % Create bar chart showing percentages
-        h = bar(band_percentages, 'FaceColor', 'flat');
-        
-        % Apply colors
-        for i = 1:length(bands)
-            h.CData(i,:) = band_colors(i,:);
-        end
-        
-        % Set axis properties
-        set(ax6, 'XTick', 1:num_bands, 'XTickLabel', band_names);
-        xtickangle(45);
-        ylim([0 max(band_percentages)*1.2]); % Give some headroom
-        ylabel('Power (%)');
-        title('EEG Band Power Distribution');
-        grid on;
-        
-        % Add percentages as text on top of each bar
-        for i = 1:num_bands
-            % Use text function with explicit parent to avoid deletion issues
-            text(i, band_percentages(i) + 1, sprintf('%.1f%%', band_percentages(i)), ...
-                 'HorizontalAlignment', 'center', 'FontWeight', 'bold');
-        end
-        
-        % Add ratio calculations (common in EEG analysis)
-        delta_idx = find(strcmp(band_names, 'Delta'));
-        theta_idx = find(strcmp(band_names, 'Theta'));
-        alpha_idx = find(strcmp(band_names, 'Alpha'));
-        beta_idx = find(strcmp(band_names, 'Beta'));
-        gamma_idx = find(strcmp(band_names, 'Gamma'));
-        
-        % Calculate EEG ratios (stored in variables but not displayed)
-        if band_power(beta_idx) > 0
-            theta_beta_ratio = band_power(theta_idx) / band_power(beta_idx);
-        else
-            theta_beta_ratio = NaN;
-        end
-        
-        if band_power(delta_idx) > 0
-            theta_delta_ratio = band_power(theta_idx) / band_power(delta_idx);
-        else
-            theta_delta_ratio = NaN;
-        end
-        
-        % Store ratios in EEG_band_ratios struct for potential future use
-        EEG_band_ratios.theta_beta = theta_beta_ratio;
-        EEG_band_ratios.theta_delta = theta_delta_ratio;
-        
-    catch ME
-        % Handle any errors in this subplot creation
-        warning('Error creating EEG band power distribution plot: %s', ME.message);
-        title('EEG Band Power Distribution - Error');
-        text(0.5, 0.5, sprintf('Error: %s', ME.message), ...
-             'HorizontalAlignment', 'center', 'Color', 'red');
-        axis off;
-    end
+    % --- Subplot 6: EEG Band Power Distribution REMOVED ---
     
     % --- Link Axes and Final Adjustments ---
     % Collect axes handles that should be time-linked (exclude histogram and band power plots)

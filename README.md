@@ -43,6 +43,14 @@ cd tFUS-EEG-ToolKit
 
 ## Usage
 
+### Quick Start with Sample Data
+
+The repository includes two sample MAT files in the root directory:
+- `example_SHAM_A.mat` - Example sham condition data
+- `example_STIM_A.mat` - Example stimulation condition data
+
+These files are ready to use with Components 1-3 of the pipeline (no conversion needed).
+
 ### 1. Data Conversion (RHD to MAT)
 
 Convert Intan RHD2000 files to MATLAB format:
@@ -64,7 +72,7 @@ Analyze EEG data for tic events:
 
 ```matlab
 cd '1. Tic Event Based Spectogram:EEG Analysis'
-eegSpectogram_v9_histogram_v3
+eegSpectogram
 ```
 
 Features:
@@ -80,7 +88,7 @@ Compare temporal patterns between STIM and SHAM conditions:
 
 ```matlab
 cd '2. Peak Temporal Distrubution'
-tFUS_EventAnalyzer_v3
+tFUS_EventAnalyzer_final
 ```
 
 This generates:
@@ -123,10 +131,10 @@ tFUS-EEG-ToolKit/
 │   ├── read_Intan_RHD2000_file.m    # Intan file reader
 │   └── rhd2plot_samplerate.m        # Main conversion script
 ├── 1. Tic Event Based Spectogram:EEG Analysis/
-│   ├── eegSpectogram_v9_histogram_v3.m  # Main analysis script
-│   └── computeLogSpectrogram.m          # Helper function
+│   ├── eegSpectogram.m              # Main analysis script
+│   └── computeLogSpectrogram.m     # Helper function
 ├── 2. Peak Temporal Distrubution/
-│   ├── tFUS_EventAnalyzer_v3.m      # Main temporal analysis
+│   ├── tFUS_EventAnalyzer_final.m   # Main temporal analysis
 │   ├── plotTemporalPSDmap.m         # Visualization function
 │   └── analysis/output/             # Results directory
 └── 3. EEG Monitor (200 dpi, 30 fps for Fs=1000Hz)/
