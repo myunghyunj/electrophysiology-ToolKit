@@ -1,8 +1,10 @@
-# electrophysiology (tFUS-EEG)-ToolKit
-MATLAB/Python toolkit for detecting and analyzing tic events in EEG recordings from transcranial focused ultrasound (tFUS) experiments, featuring automated spike detection, temporal distribution analysis, and real-time visualization capabilities.
+# tFUS-EEG-ToolKit
+
 [![MATLAB R2018b+](https://img.shields.io/badge/MATLAB-R2018b+-orange.svg)](https://www.mathworks.com/products/matlab.html)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
+A comprehensive MATLAB/Python toolkit for analyzing EEG data from transcranial focused ultrasound (tFUS) experiments, with specialized tools for tic event detection and temporal analysis.
 
 ## Overview
 
@@ -11,7 +13,6 @@ This toolkit provides a complete pipeline for processing and analyzing EEG recor
 - Event detection using spectrograms and peak analysis
 - Temporal distribution analysis of detected events
 - Video visualization of EEG signals
-
 ## Features
 
 - **Automated RHD to MAT conversion** with intelligent downsampling
