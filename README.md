@@ -156,7 +156,7 @@ If you use this toolkit in your research, please cite:
 ## Acknowledgments
 
 - Intan RHD file reader based on [Intan Technologies MATLAB file readers](https://www.intantech.com/downloads.html?tabSelect=Software&yPos=0)
-- Developed for tFUS-EEG research at [School of Electrical Engineering (EE), Korea Advanced Institute of Science and Technology (KAIST)]
+- Developed for tFUS-EEG research at KAIST EE (Daejeon, South Korea).
 
 ## License
 
