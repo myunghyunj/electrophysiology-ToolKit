@@ -1,4 +1,4 @@
-%% tFUS_EventAnalyzer_v3.m
+%% tFUS_EventAnalyzer_version3.m
 
 clear; close all; clc;
 
