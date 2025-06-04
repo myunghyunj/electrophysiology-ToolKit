@@ -13,7 +13,7 @@ import h5py
 matplotlib.use('agg')  # Non-interactive backend, better for video generation
 plt.rcParams['figure.dpi'] = 1600
 
-def create_apple_eeg_video(mat_file, out_file='eeg_video.mp4', window_size=6, fps=30):
+def create_eeg_video(mat_file, out_file='eeg_video.mp4', window_size=6, fps=30):
     print(f"Loading data from {mat_file}...")
     
     # Try to determine if file is v7.3 format
@@ -140,18 +140,18 @@ def create_apple_eeg_video(mat_file, out_file='eeg_video.mp4', window_size=6, fp
     height = base_height - (base_height % 2)
     print(f"Video dimensions: {width}x{height} (10.2:1 aspect ratio)")
     
-    # Grid parameters - matching createAppleGrid.m exactly
+    # Grid parameters - matching createGrid.m exactly
     major = 0.2   # 200ms
     minor = 0.04  # 40ms
     second = 1.0  # 1 second
     
-    # Grid colors - matching createAppleGrid.m exactly
+    # Grid colors - matching createGrid.m exactly
     major_color = np.array([173, 172, 176]) / 255
     minor_color = np.array([236, 236, 236]) / 255
     second_color = np.array([140, 140, 140]) / 255
     
     # Line colors
-    line_color = np.array([232, 60, 91]) / 255  # Apple Health pink
+    line_color = np.array([232, 60, 91]) / 255  # Signal line pink
     line_width = 1.0
     
     # Scale bar settings
@@ -193,7 +193,7 @@ def create_apple_eeg_video(mat_file, out_file='eeg_video.mp4', window_size=6, fp
         ax.set_aspect('auto')
         ax.axis('off')
         
-        # Draw grid exactly like createAppleGrid.m
+        # Draw grid exactly like createGrid.m
         # 1. Minor grid lines first (bottom layer)
         for x in np.arange(np.floor(visible_start/minor)*minor, visible_end+minor, minor):
             if abs(x % major) >= 1e-12:  # Not a major gridline
@@ -285,7 +285,7 @@ def create_apple_eeg_video(mat_file, out_file='eeg_video.mp4', window_size=6, fp
 def main():
     """Command line interface"""
     import argparse
-    parser = argparse.ArgumentParser(description='Create Apple Health-style EEG video')
+    parser = argparse.ArgumentParser(description='Create professional-style EEG video')
     parser.add_argument('mat_file', nargs='?', help='Path to .mat file containing EEG data')
     parser.add_argument('--output', '-o', default=None, help='Output video file')
     parser.add_argument('--window', '-w', type=float, default=6, help='Visible window size in seconds')
@@ -308,12 +308,12 @@ def main():
             output_video = base_name + "_video.mp4"
             
             print(f"\nProcessing {mat_file} -> {output_video}")
-            create_apple_eeg_video(mat_file, out_file=output_video, window_size=args.window, fps=args.fps)
+            create_eeg_video(mat_file, out_file=output_video, window_size=args.window, fps=args.fps)
     
     # Single file mode
     elif args.mat_file:
         output = args.output if args.output else os.path.splitext(args.mat_file)[0] + "_video.mp4"
-        create_apple_eeg_video(args.mat_file, output, args.window, args.fps)
+        create_eeg_video(args.mat_file, output, args.window, args.fps)
     
     # No input provided
     else:
