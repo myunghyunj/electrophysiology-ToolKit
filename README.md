@@ -4,7 +4,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive MATLAB/Python toolkit for analyzing EEG data from transcranial focused ultrasound (tFUS) experiments, with specialized tools for tic event detection and temporal analysis.
+A comprehensive MATLAB/Python toolkit for analyzing animal epilespy model's EEG data. Fine tuned signal processing tools for genetically and chemically induced tic event detection and temporal analysis.
 
 ## Overview
 
