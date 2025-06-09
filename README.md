@@ -4,7 +4,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-Toolkit provides a comprehensive and modular framework for the analysis of EEG data derived from preclinical models of epilepsy. It integrates pre-optimized signal processing algorithms specifically engineered for the robust detection and temporal delineation of Tourette-like tic phenomena in both transgenic and chemically induced rodent models of neurological pathology. All graphical outputs are publication-ready and conform to clinical electrophysiological conventions, facilitating seamless juxtaposition with behavioral video recordings for multimodal analysis.
+Toolkit provides a comprehensive and modular framework for the analysis of EEG data derived from preclinical models of epilepsy. It integrates pre-optimized signal processing algorithms specifically engineered for the robust detection and temporal delineation of Tourette-like tic phenomena in both transgenic and chemically induced rodent models of neurological pathology. All graphical outputs are publication-ready and conform to clinical electrophysiological conventions—i.e. seamless juxtaposition with behavioral video recordings for multimodal analysis.
 
 ## Overview
 
@@ -28,7 +28,7 @@ This toolkit provides a complete pipeline for processing and analyzing EEG recor
 #### MATLAB Requirements
 - MATLAB R2018b or later
 - Signal Processing Toolbox
-- Statistics and Machine Learning Toolbox
+- Statistics and Machine Learning Toolbox *
 
 #### Python Requirements
 Install the Python dependencies with:
