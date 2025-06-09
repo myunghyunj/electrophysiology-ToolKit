@@ -4,7 +4,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive framework for the analysis of EEG data derived from animal epilepsy models. It includes pre-fine tuned signal processing tools specifically designed for the detection and temporal analysis of tourette-like tic events in both transgenic and chemically induced rodent models of neurological dysfunction. All publication-ready figures conform to clinical designs—i.e. electrophysiology tracing monitor for video juxtaposition.
+A comprehensive framework for the analysis of EEG data derived from animal epilepsy models. It includes pre-fine tuned signal processing tools specifically designed for the detection and temporal analysis of tourette-like tic events in both transgenic and chemically induced rodent models of neurological dysfunction. All publication-ready figures conform to clinical convention designs—i.e. electrophysiology tracing monitor for video juxtaposition.
 
 ## Overview
 
