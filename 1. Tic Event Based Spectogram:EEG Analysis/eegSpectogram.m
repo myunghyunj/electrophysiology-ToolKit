@@ -1,9 +1,8 @@
-%% EEG/EMG Tic Analysis & Visualization (v9 with SNR Peak Analysis)
-% Based on user's detailed technical brief for improved peak detection using LF power.
+%% EEG/EMG Tic Analysis & Visualization
 
 clear; close all; clc;
 
-%% 0) Analysis Parameters (User Tunable)
+%% 0) Analysis Parameters (Tunable)
 params.win_sec          = 0.2;   % RMS window (s) for EEG event detection
 params.k_thresh         = 3.5;   % Multiplier for EEG RMS threshold (baseline = median(RMS))
 params.min_dur_ms       = 50;    % Minimum event duration for EEG (ms)
@@ -661,5 +660,3 @@ for file_idx = 1:length(filenames)
         pause(0.5); % Brief pause between files
     end
 end
-
-% Note: computeLogSpectrogram has been moved to a separate file
