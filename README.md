@@ -38,7 +38,7 @@ pip install -r requirements.txt
 
 ### Setup
 ```bash
-git clone https://github.com/yourusername/tFUS-EEG-ToolKit.git
+git clone https://github.com/myunghyunj/tFUS-EEG-ToolKit.git
 cd tFUS-EEG-ToolKit
 ```
 
@@ -163,7 +163,7 @@ graph TD
 If you use this toolkit in your research, please cite:
 
 ```
-[Publicaiton : In preparation]
+[Publicaiton : Paper Under Review]
 ```
 
 ## Acknowledgments
