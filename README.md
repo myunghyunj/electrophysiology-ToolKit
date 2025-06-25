@@ -163,7 +163,9 @@ graph TD
 If you use this toolkit in your research, please cite:
 
 ```
-[Publicaiton : Paper Under Review]
+[Publication : Paper Under Review]
+[Authors : Kim, Kang, **Jeong** et al.]
+[Year : 2025]
 ```
 
 ## Acknowledgments
