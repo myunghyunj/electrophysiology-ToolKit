@@ -8,6 +8,7 @@ running = False
 paused = False
 start_time = None
 lap_counter = 1
+elapsed_time = 0
 
 def format_time(elapsed):
     hours, remainder = divmod(elapsed, 3600)
@@ -16,7 +17,7 @@ def format_time(elapsed):
     return f"{int(hours):02}:{int(mins):02}:{int(secs):02}:{centisec:02}"
 
 def on_press(key):
-    global running, paused, start_time, lap_counter
+    global running, paused, start_time, lap_counter, elapsed_time
 
     if key == keyboard.Key.space:
         if not running and not paused:
@@ -24,8 +25,8 @@ def on_press(key):
             start_time = time.time()
             print("Stopwatch started.")
         elif running:
-            elapsed = time.time() - start_time
-            timestamp = format_time(elapsed)
+            current_elapsed = elapsed_time + (time.time() - start_time)
+            timestamp = format_time(current_elapsed)
             laps.append((lap_counter, timestamp))
             print(f"Lap #{lap_counter}: {timestamp}")
             lap_counter += 1
@@ -34,11 +35,11 @@ def on_press(key):
         if running:
             paused = True
             running = False
-            elapsed = time.time() - start_time
-            print(f"Paused at {format_time(elapsed)}. Stop stopwatch? (y/n)")
+            elapsed_time += time.time() - start_time
+            print(f"Paused at {format_time(elapsed_time)}. Stop stopwatch? (y/n)")
 
 def on_release(key):
-    global running, paused
+    global running, paused, start_time
 
     if paused:
         if hasattr(key, 'char') and key.char:
@@ -51,6 +52,7 @@ def on_release(key):
             elif key.char.lower() == 'n':
                 paused = False
                 running = True
+                start_time = time.time()
                 print("Resumed.")
 
 print("press SPACE to start and record laps, ENTER to pause, and ctrl+C to exit")
