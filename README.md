@@ -112,6 +112,68 @@ python final.py
 python final_fixed5000uv.py
 ```
 
+### 5. Locomotion Analysis Tools
+
+This section explains for head-tracking locomotion workflows that connect DeepLabCut (DLC) outputs to time-binned distance analysis.
+
+#### Preprocess with DeepLabCut (head)
+```bash
+cd '4. Locomotion Analysis Tools'
+```
+```matlab
+dlc_head_tracking_resampled
+```
+- Place DLC CSV exports in `raw/` and ensure the body part `head` exists in the header.
+- Include `SHAM` or `STIM` in filenames to enable group-based analysis later.
+- Outputs per CSV: `<basename>_head_tracking_3fps.xlsx` and `<basename>_head_analysis_3fps.png`.
+
+#### Analyze time-binned locomotion
+```matlab
+analyze_binned_locomotion
+```
+- When prompted, enter:
+  - `bin_size_min` (e.g., 5)
+  - `mm_per_pix` (e.g., 0.533)
+  - Tip: `mm_per_pix = known_length_mm / measured_length_pixels` (use a ruler or arena dimension).
+
+Outputs:
+- Figure: `binned_locomotion_<bin>min.png` (mean ± SEM per bin; SHAM vs STIM; individual points; per-bin n).
+- Excel: `binned_locomotion_summary_<bin>min.xlsx` with `Bin`, `SHAM_Mean/SEM/N`, `STIM_Mean/SEM/N`.
+- Console: per-group totals (mean ± SEM, range) and average per-bin distance.
+
+Notes:
+- If no `*_head_tracking_3fps.xlsx` are found, ensure the preprocessing step above has been run and files reside here (or in `head_tracking_results/`).
+- Grouping is determined by `SHAM`/`STIM` appearing in filenames (case-insensitive).
+
+#### Method (at a glance)
+- Convert `Time_sec` → minutes; number of bins = `ceil(max(Time_min) / bin_size_min)`.
+- Sum distances within half-open intervals `[start, end)` per bin.
+- Build an animal-by-bin matrix (NaN-padded) and compute per-bin mean and SEM using NaN-aware operations.
+- Save a SHAM vs STIM figure and write the per-bin summary to Excel.
+
+#### File discovery and grouping
+- Searches current folder for `*_head_tracking_3fps.xlsx`; if none are found, searches `head_tracking_results/`.
+- Filenames containing `SHAM` → SHAM group; containing `STIM` → STIM group.
+- If no files are found, run preprocessing first (`dlc_head_tracking_resampled.m`).
+
+#### Requirements
+- MATLAB (R2018b or newer recommended).
+- Ability to read `.xlsx` via `readtable`.
+- If Statistics Toolbox is unavailable, replace `nanmean`/`nanstd` with `mean(...,'omitnan')` and `std(...,'omitnan')`.
+- DeepLabCut CSV exports with a `head` body part, placed in `raw/`.
+
+#### Troubleshooting
+- "No head tracking output files found": ensure files match `*_head_tracking_3fps.xlsx` and are in this folder or `head_tracking_results/`.
+- "Invalid bin size / mm-per-pixel": enter positive numeric values when prompted.
+- Empty or zero distances: the script warns if an input file has no valid distance data.
+- Missing columns: confirm your Excel files have `Time_sec` and `Distance_pixels` headers.
+- DLC preprocessing: "No head marker found": ensure your DLC export includes a `head` body part in the header.
+
+#### Reproducibility notes
+- Binning uses half-open intervals `[start, end)` to avoid double-counting boundary samples.
+- Distances are reported in millimeters using `Distance_mm = Distance_pixels * mm_per_pix`.
+- Per-bin sample sizes (N) reflect the number of animals contributing non-NaN values to each bin.
+
 ## Data Format
 
 ### Input
@@ -138,9 +200,12 @@ tFUS-EEG-ToolKit/
 │   ├── tFUS_EventAnalyzer_final.m   # Main temporal analysis
 │   ├── plotTemporalPSDmap.m         # Visualization function
 │   └── analysis/output/             # Results directory
-└── 3. EEG Monitor (200 dpi, 30 fps for Fs=1000Hz)/
-    ├── final.py                     # Adaptive scaling video
-    └── final_fixed5000uv.py         # Fixed scaling video
+├── 3. EEG Monitor (200 dpi, 30 fps for Fs=1000Hz)/
+│   ├── final.py                     # Adaptive scaling video
+│   └── final_fixed5000uv.py         # Fixed scaling video
+└── 4. Locomotion Analysis Tools/
+    ├── analyze_binned_locomotion.m   # Time-binned distance analysis (SHAM vs STIM)
+    └── dlc_head_tracking_resampled.m # DLC CSV → 3 fps tracking Excel
 ```
 
 ## Analysis Pipeline
