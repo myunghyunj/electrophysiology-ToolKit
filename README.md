@@ -4,6 +4,8 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
+### This repository was used in this work [(IEEE TNSRE, 2025)](https://ieeexplore.ieee.org/abstract/document/11230828/)
+
 Toolkit provides a comprehensive and modular framework for the analysis of EEG data derived from preclinical models of epilepsy. It integrates pre-optimized signal processing algorithms specifically engineered for the robust detection and temporal delineation of Tourette-like tic phenomena in both transgenic and chemically induced rodent models of neurological pathology. All graphical outputs are publication-ready and conform to clinical electrophysiological conventions—i.e. seamless juxtaposition with behavioral video recordings for multimodal analysis.
 
 ## Overview
