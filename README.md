@@ -78,12 +78,20 @@ cd '1. Tic Event Based Spectogram:EEG Analysis'
 eegSpectogram
 ```
 
+Python port:
+
+```bash
+python '1. Tic Event Based Spectogram:EEG Analysis/eeg_spectrogram.py' \
+  '_EEG:EMG Dataset (STIM, SHAM 1ea each)/example_STIM_A.mat' \
+  --output-dir analyzed_figures_py
+```
+
 Features:
-- Interactive mode selection (batch/single file)
+- Interactive MATLAB workflow plus non-interactive Python CLI
 - RMS-based event detection
 - Low-Frequency (0.5-4 Hz) power validation
 - Spectrogram generation with event markers
-- Relative power analysis across frequency bands
+- CSV export of detected events per file
 
 ### 3. Temporal Distribution Analysis
 
@@ -94,11 +102,20 @@ cd '2. Peak Temporal Distrubution'
 tFUS_EventAnalyzer_final
 ```
 
+Python port:
+
+```bash
+python '2. Peak Temporal Distrubution/temporal_peak_distribution.py' \
+  --stim '_EEG:EMG Dataset (STIM, SHAM 1ea each)/example_STIM_A.mat' \
+  --sham '_EEG:EMG Dataset (STIM, SHAM 1ea each)/example_SHAM_A.mat' \
+  --output-dir analysis/output_py
+```
+
 This generates:
 - Temporal PSD maps with z-score overlays
 - Stacked bar charts of peak distributions
-- Excel output with raw data
-- Publication-ready figures
+- CSV summary output for downstream analysis
+- Publication-ready figures (PNG + EPS for vector workflows)
 
 ### 4. EEG Video Generation
 
@@ -114,6 +131,16 @@ python final.py
 python final_fixed5000uv.py
 ```
 
+### 4.5 Unified Python CLI launcher
+
+If you want one terminal entry point for all Python tools (tasks 1-4), run:
+
+```bash
+python tool.py
+```
+
+The launcher prompts for task number and accepts drag-dropped file or folder paths.
+
 ### 5. Locomotion Analysis Tools
 
 This section explains for head-tracking locomotion workflows that connect DeepLabCut (DLC) outputs to time-binned distance analysis.
@@ -121,15 +148,19 @@ This section explains for head-tracking locomotion workflows that connect DeepLa
 #### Preprocess with DeepLabCut (head)
 ```bash
 cd '4. Locomotion Analysis Tools'
+python locomotion_analysis.py preprocess raw/*.csv --output-dir python_output
 ```
 ```matlab
 dlc_head_tracking_resampled
 ```
 - Place DLC CSV exports in `raw/` and ensure the body part `head` exists in the header.
 - Include `SHAM` or `STIM` in filenames to enable group-based analysis later.
-- Outputs per CSV: `<basename>_head_tracking_3fps.xlsx` and `<basename>_head_analysis_3fps.png`.
+- Python outputs per CSV: `<basename>_head_tracking_3fps.csv`, `<basename>_head_tracking_3fps.xlsx`, `<basename>_head_analysis_3fps.png`, and `<basename>_head_analysis_3fps.eps`.
 
 #### Analyze time-binned locomotion
+```bash
+python locomotion_analysis.py analyze python_output --mm-per-pix 0.533 --bin-size-min 5 --output-dir python_output
+```
 ```matlab
 analyze_binned_locomotion
 ```
