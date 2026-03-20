@@ -1,0 +1,45 @@
+name: python-smoke
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+
+      - run: |
+          python -m py_compile \
+            "1. Tic Event Based Spectogram:EEG Analysis/eeg_spectrogram.py" \
+            "2. Peak Temporal Distrubution/temporal_peak_distribution.py" \
+            "3. EEG Monitor (1600 dpi, 30 fps for Fs=1000Hz)/final.py" \
+            "4. Locomotion Analysis Tools/locomotion_analysis.py" \
+            tool.py
+
+      - run: python "3. EEG Monitor (1600 dpi, 30 fps for Fs=1000Hz)/final.py" --help
+      - run: python "4. Locomotion Analysis Tools/locomotion_analysis.py" --help
+
+      - run: |
+          python "1. Tic Event Based Spectogram:EEG Analysis/eeg_spectrogram.py" \
+            "_EEG:EMG Dataset (STIM, SHAM 1ea each)/example_STIM_A.mat" \
+            --output-dir /tmp/eeg_py_smoke \
+            --save-detection-envelope
+
+      - run: |
+          python "2. Peak Temporal Distrubution/temporal_peak_distribution.py" \
+            --stim "_EEG:EMG Dataset (STIM, SHAM 1ea each)/example_STIM_A.mat" \
+            --sham "_EEG:EMG Dataset (STIM, SHAM 1ea each)/example_SHAM_A.mat" \
+            --output-dir /tmp/temporal_py_smoke
+
+      - run: test -f /tmp/temporal_py_smoke/temporal_peak_raw_data.csv
+      - run: test -f /tmp/temporal_py_smoke/temporal_peak_raw_data.xlsx

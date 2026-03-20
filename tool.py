@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import glob
 import shlex
 import subprocess
 import sys
@@ -47,17 +48,36 @@ def task_2() -> None:
 
 def task_3() -> None:
     mode = ask("Task 3 mode: [1] adaptive scale, [2] fixed ±5000 µV", "1")
-    raw = ask("Drop one .mat file for Task 3")
-    paths = parse_dragdrop_list(raw)
-    if len(paths) != 1:
-        raise SystemExit('Task 3 expects exactly one .mat file')
+    raw = ask("Drop one .mat file, or enter a glob pattern such as './*.mat'")
     output = ask("Output video file (leave blank for automatic naming)", "")
     window = ask("Visible window size in seconds", "6")
     fps = ask("Video FPS", "30")
     script = "final.py" if mode != "2" else "final_fixed5000uv.py"
-    args = [paths[0], "--window", window, "--fps", fps]
-    if output:
-        args += ["--output", output]
+
+    paths = parse_dragdrop_list(raw)
+    raw_target = raw.strip()
+    parsed_glob = len(paths) == 1 and glob.has_magic(paths[0])
+    raw_glob = glob.has_magic(raw_target)
+    raw_file = Path(raw_target)
+
+    if parsed_glob or raw_glob:
+        target = paths[0] if parsed_glob else raw_target
+        if output:
+            raise SystemExit("Custom output filename is only supported for single-file mode.")
+        args = ["--all", "--pattern", target, "--window", window, "--fps", fps]
+    else:
+        if raw_file.suffix.lower() == ".mat" and raw_file.exists():
+            target = raw_target
+        else:
+            if len(paths) != 1:
+                raise SystemExit('Task 3 expects exactly one .mat file or one glob pattern')
+            target = paths[0]
+        if Path(target).suffix.lower() != ".mat":
+            raise SystemExit("Task 3 expects a .mat file or a glob pattern matching .mat files.")
+        args = [target, "--window", window, "--fps", fps]
+        if output:
+            args += ["--output", output]
+
     run_script(REPO_ROOT / "3. EEG Monitor (1600 dpi, 30 fps for Fs=1000Hz)" / script, args)
 
 

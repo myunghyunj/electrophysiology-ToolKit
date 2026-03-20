@@ -41,15 +41,15 @@ pip install -r requirements.txt
 
 ### Setup
 ```bash
-git clone https://github.com/myunghyunj/tFUS-EEG-ToolKit.git
-cd tFUS-EEG-ToolKit
+git clone https://github.com/myunghyunj/electrophysiology-ToolKit.git
+cd electrophysiology-ToolKit
 ```
 
 ## Usage
 
 ### Quick Start with Sample Data
 
-The repository includes two sample MAT files in the root directory:
+The repository includes two sample MAT files in `_EEG:EMG Dataset (STIM, SHAM 1ea each)/`:
 - `example_SHAM_A.mat` - Example sham condition data
 - `example_STIM_A.mat` - Example stimulation condition data
 
@@ -143,7 +143,7 @@ If you want one terminal entry point for all Python tools (tasks 1-4), run:
 python tool.py
 ```
 
-The launcher prompts for task number and accepts drag-dropped file or folder paths.
+The launcher prompts for a task number, accepts drag-dropped file or folder paths for tasks 1, 2, and 4, and supports either a single `.mat` file or a glob pattern for task 3.
 
 ### 5. Locomotion Analysis Tools
 
@@ -226,7 +226,7 @@ Notes:
 ## Project Structure
 
 ```
-tFUS-EEG-ToolKit/
+electrophysiology-ToolKit/
 ├── 0. rhd-mat converter (downsample)/
 │   ├── read_Intan_RHD2000_file.m    # Intan file reader
 │   └── rhd2plot_samplerate.m        # Main conversion script
