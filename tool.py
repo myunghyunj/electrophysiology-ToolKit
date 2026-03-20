@@ -47,12 +47,15 @@ def task_2() -> None:
 
 def task_3() -> None:
     mode = ask("Task 3 mode: [1] adaptive scale, [2] fixed ±5000 µV", "1")
-    raw = ask("Drop one .mat file or use a glob pattern such as './*.mat'")
+    raw = ask("Drop one .mat file for Task 3")
+    paths = parse_dragdrop_list(raw)
+    if len(paths) != 1:
+        raise SystemExit('Task 3 expects exactly one .mat file')
     output = ask("Output video file (leave blank for automatic naming)", "")
     window = ask("Visible window size in seconds", "6")
     fps = ask("Video FPS", "30")
     script = "final.py" if mode != "2" else "final_fixed5000uv.py"
-    args = [raw, "--window", window, "--fps", fps] if raw else []
+    args = [paths[0], "--window", window, "--fps", fps]
     if output:
         args += ["--output", output]
     run_script(REPO_ROOT / "3. EEG Monitor (1600 dpi, 30 fps for Fs=1000Hz)" / script, args)

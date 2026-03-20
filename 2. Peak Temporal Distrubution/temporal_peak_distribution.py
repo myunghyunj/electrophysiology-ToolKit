@@ -218,7 +218,7 @@ def save_temporal_psd_map(stim, sham, out_dir: Path, rec_dur_min: int, bin_min: 
     fig.savefig(out_dir / 'Temporal_PSDmap.png', dpi=200)
     fig.savefig(out_dir / 'Temporal_PSDmap.eps', format='eps')
     plt.close(fig)
-    return {'stim_files': stim_files, 'sham_files': sham_files, 'stim_times': stim_times, 'sham_times': sham_times, 'stim_z': stim_z, 'sham_z': sham_z}
+    return {'stim_peak_names': stim_names, 'sham_peak_names': sham_names, 'stim_times': stim_times, 'sham_times': sham_times, 'stim_z': stim_z, 'sham_z': sham_z, 'stim_file_count': len(stim_files), 'sham_file_count': len(sham_files)}
 
 
 def save_zscore_distribution_plot(stim_z: np.ndarray, sham_z: np.ndarray, num_stim_files: int, num_sham_files: int, out_dir: Path) -> None:
@@ -241,10 +241,10 @@ def save_zscore_distribution_plot(stim_z: np.ndarray, sham_z: np.ndarray, num_st
     plt.close(fig)
 
 
-def save_raw_summary(out_dir: Path, stim_files: list[str], sham_files: list[str], stim_times: np.ndarray, sham_times: np.ndarray, stim_z: np.ndarray, sham_z: np.ndarray) -> None:
+def save_raw_summary(out_dir: Path, stim_names: list[str], sham_names: list[str], stim_times: np.ndarray, sham_times: np.ndarray, stim_z: np.ndarray, sham_z: np.ndarray) -> None:
     rows = []
-    for group, files, times, zscores in [('STIM', stim_files, stim_times, stim_z), ('SHAM', sham_files, sham_times, sham_z)]:
-        for file_name, peak_time, zscore in zip(files, times, zscores):
+    for group, peak_names, times, zscores in [('STIM', stim_names, stim_times, stim_z), ('SHAM', sham_names, sham_times, sham_z)]:
+        for file_name, peak_time, zscore in zip(peak_names, times, zscores):
             rows.append({'Group': group, 'Filename': file_name, 'PeakTime_sec': float(peak_time), 'Zscore': float(zscore)})
     csv_path = out_dir / 'temporal_peak_raw_data.csv'
     with csv_path.open('w', newline='') as f:
@@ -305,8 +305,8 @@ def main() -> None:
     sham = collect_group(sham_files, args.fs, params)
     out_dir = Path(args.output_dir)
     summary = save_temporal_psd_map(stim, sham, out_dir, rec_dur_min=args.recording_minutes, bin_min=args.bin_min, z_increment=args.z_increment, show_sem=not args.no_sem, show_kde=not args.no_kde)
-    save_zscore_distribution_plot(summary['stim_z'], summary['sham_z'], len(stim_files), len(sham_files), out_dir)
-    save_raw_summary(out_dir, summary['stim_files'], summary['sham_files'], summary['stim_times'], summary['sham_times'], summary['stim_z'], summary['sham_z'])
+    save_zscore_distribution_plot(summary['stim_z'], summary['sham_z'], summary['stim_file_count'], summary['sham_file_count'], out_dir)
+    save_raw_summary(out_dir, summary['stim_peak_names'], summary['sham_peak_names'], summary['stim_times'], summary['sham_times'], summary['stim_z'], summary['sham_z'])
     print(f'STIM files: {len(stim_files)}, peaks: {stim[0].size}')
     print(f'SHAM files: {len(sham_files)}, peaks: {sham[0].size}')
     print(f'Outputs written to {out_dir}')

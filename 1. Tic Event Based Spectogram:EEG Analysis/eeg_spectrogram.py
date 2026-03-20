@@ -26,7 +26,7 @@ class AnalysisParams:
     k_thresh: float = 3.5
     min_dur_ms: float = 50
     refractory_ms: float = 50
-    lf_band: tuple[float, float] = (0.5, 4.0)
+    lf_band: tuple[float, float] = (0.5, 10.0)
     lf_win_sec: float = 0.25
     k_lf_thresh: float = 3.0
     tp_window_ms: float = 50
@@ -172,7 +172,7 @@ def compute_log_spectrogram(signal: np.ndarray, fs: int, nfft: int, noverlap: in
     return freqs[keep], times, np.log10(asd)
 
 
-def analyze_file(mat_file: Path, output_dir: Path, fs: int, params: AnalysisParams, save_detection_envelope: bool = False) -> AnalysisResult:
+def analyze_file(mat_file: Path, output_dir: Path, fs: int, params: AnalysisParams, save_detection_envelope: bool = False, save_eps: bool = False) -> AnalysisResult:
     raw = load_raw_data(mat_file)
     eeg = raw[0].astype(float)
     emg = raw[1].astype(float) if raw.shape[0] >= 2 and raw.shape[1] == raw[1].size else None
@@ -187,7 +187,7 @@ def analyze_file(mat_file: Path, output_dir: Path, fs: int, params: AnalysisPara
     candidates = find_candidate_events(rms, threshold_eeg, round(params.min_dur_ms / 1000 * fs))
     merged = merge_events(candidates, round(params.refractory_ms / 1000 * fs))
 
-    eeg_lf = lf_bandpass_with_padding(eeg_plot, fs, 0.5, 10, order=2, pad_samples=500)
+    eeg_lf = lf_bandpass_with_padding(eeg_plot, fs, params.lf_band[0], params.lf_band[1], order=2, pad_samples=500)
     lf_power = moving_mean_power(eeg_lf, round(params.lf_win_sec * fs))
     finite = lf_power[np.isfinite(lf_power)]
     lf_baseline = float(np.median(finite)) if finite.size else float('nan')
@@ -205,9 +205,9 @@ def analyze_file(mat_file: Path, output_dir: Path, fs: int, params: AnalysisPara
         is_tp = bool(np.any(lf_mask[lo:hi]))
         events.append(EEGEvent(start_time=start_idx / fs, peak_time=peak_idx / fs, end_time=end_idx / fs, duration_ms=(end_idx - start_idx + 1) / fs * 1000.0, peak_rms_value=float(event['peak_rms_value']), is_tp=is_tp, snr_db=compute_snr_db(eeg_plot, start_idx, peak_idx, end_idx, fs)))
 
-    save_main_figure(mat_file, output_dir, eeg, eeg_plot, emg, emg_plot, events, fs)
+    save_main_figure(mat_file, output_dir, eeg, eeg_plot, emg, emg_plot, events, fs, save_eps=save_eps)
     if save_detection_envelope:
-        save_detection_figure(mat_file, output_dir, rms, threshold_eeg, fs)
+        save_detection_figure(mat_file, output_dir, rms, threshold_eeg, fs, save_eps=save_eps)
     save_event_table(mat_file, output_dir, events)
 
     return AnalysisResult(file=mat_file, events=events, threshold_eeg=threshold_eeg, baseline_eeg_rms=baseline_eeg_rms, lf_threshold=lf_threshold, lf_baseline=lf_baseline, has_emg=has_emg)
@@ -223,7 +223,7 @@ def save_event_table(mat_file: Path, output_dir: Path, events: list[EEGEvent]) -
             writer.writerow(asdict(event))
 
 
-def save_main_figure(mat_file: Path, output_dir: Path, eeg: np.ndarray, eeg_plot: np.ndarray, emg: np.ndarray | None, emg_plot: np.ndarray | None, events: list[EEGEvent], fs: int) -> None:
+def save_main_figure(mat_file: Path, output_dir: Path, eeg: np.ndarray, eeg_plot: np.ndarray, emg: np.ndarray | None, emg_plot: np.ndarray | None, events: list[EEGEvent], fs: int, save_eps: bool = False) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     t = np.arange(eeg.size) / fs
     fig, axes = plt.subplots(2, 2, figsize=(16, 8), constrained_layout=True)
@@ -277,11 +277,12 @@ def save_main_figure(mat_file: Path, output_dir: Path, eeg: np.ndarray, eeg_plot
     ax.set_xlabel('Time (s)')
 
     fig.savefig(output_dir / f'{mat_file.stem}_analysis.png', dpi=200)
-    fig.savefig(output_dir / f'{mat_file.stem}_analysis.eps', format='eps')
+    if save_eps:
+        fig.savefig(output_dir / f'{mat_file.stem}_analysis.eps', format='eps')
     plt.close(fig)
 
 
-def save_detection_figure(mat_file: Path, output_dir: Path, rms: np.ndarray, threshold_eeg: float, fs: int) -> None:
+def save_detection_figure(mat_file: Path, output_dir: Path, rms: np.ndarray, threshold_eeg: float, fs: int, save_eps: bool = False) -> None:
     t = np.arange(rms.size) / fs
     fig, ax = plt.subplots(figsize=(12, 4), constrained_layout=True)
     ax.plot(t, rms, color='purple', linewidth=0.8, label='RMS envelope')
@@ -292,7 +293,8 @@ def save_detection_figure(mat_file: Path, output_dir: Path, rms: np.ndarray, thr
     ax.grid(True)
     ax.legend(loc='upper right', framealpha=1.0, fancybox=False)
     fig.savefig(output_dir / f'{mat_file.stem}_detection_envelope.png', dpi=200)
-    fig.savefig(output_dir / f'{mat_file.stem}_detection_envelope.eps', format='eps')
+    if save_eps:
+        fig.savefig(output_dir / f'{mat_file.stem}_detection_envelope.eps', format='eps')
     plt.close(fig)
 
 
@@ -302,6 +304,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--output-dir', default='analyzed_figures_py', help='Directory for figures and event tables')
     parser.add_argument('--fs', type=int, default=DEFAULT_FS, help='Sampling frequency in Hz')
     parser.add_argument('--save-detection-envelope', action='store_true', help='Save detection-envelope figure in addition to MATLAB-parity 4-panel figure')
+    parser.add_argument('--save-eps', action='store_true', help='Also export EPS vector outputs (slower on long recordings)')
     return parser.parse_args()
 
 
@@ -330,7 +333,7 @@ def main() -> None:
     if not files:
         raise SystemExit('No .mat files found.')
     output_dir = Path(args.output_dir)
-    results = [analyze_file(file, output_dir, args.fs, params, save_detection_envelope=args.save_detection_envelope) for file in files]
+    results = [analyze_file(file, output_dir, args.fs, params, save_detection_envelope=args.save_detection_envelope, save_eps=args.save_eps) for file in files]
     total_events = sum(len(result.events) for result in results)
     total_tp = sum(sum(event.is_tp for event in result.events) for result in results)
     print(f'Processed {len(results)} file(s).')
