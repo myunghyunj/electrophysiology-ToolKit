@@ -8,7 +8,7 @@
 
 Toolkit provides a comprehensive and modular framework for the analysis of EEG data derived from preclinical models of epilepsy. It integrates pre-optimized signal processing algorithms specifically engineered for the robust detection and temporal delineation of Tourette-like tic phenomena in both transgenic and chemically induced rodent models of neurological pathology. All graphical outputs are publication-ready and conform to clinical electrophysiological conventions—i.e. seamless juxtaposition with behavioral video recordings for multimodal analysis.
 
-+) Due to recent high traffic on this repo, I started translating these MATLAB codes to Python. MATLAB is still the convention in neuroscience. **Feel free to let me know if you find any errors or have suggestions to myunghyun@snu.ac.kr].**
++) Due to recent high traffic on this repo, I started translating these MATLAB codes to Python. MATLAB is still the convention in neuroscience. **Feel free to let me know if you find any errors or have suggestions to myunghyun@snu.ac.kr.**
 
 ## Overview
 
