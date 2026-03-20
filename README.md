@@ -92,6 +92,7 @@ Features:
 - Low-Frequency (0.5-4 Hz) power validation
 - Spectrogram generation with event markers
 - CSV export of detected events per file
+- MATLAB-parity 4-panel output: filtered EEG, filtered EMG, EEG spectrogram, EMG spectrogram
 
 ### 3. Temporal Distribution Analysis
 
@@ -114,7 +115,8 @@ python '2. Peak Temporal Distrubution/temporal_peak_distribution.py' \
 This generates:
 - Temporal PSD maps with z-score overlays
 - Stacked bar charts of peak distributions
-- CSV summary output for downstream analysis
+- Raw-data CSV/XLSX export for downstream analysis
+- Temporal PSD map plus mirrored z-score distribution plot
 - Publication-ready figures (PNG + EPS for vector workflows)
 
 ### 4. EEG Video Generation
@@ -170,8 +172,8 @@ analyze_binned_locomotion
   - Tip: `mm_per_pix = known_length_mm / measured_length_pixels` (use a ruler or arena dimension).
 
 Outputs:
-- Figure: `binned_locomotion_<bin>min.png` (mean ± SEM per bin; SHAM vs STIM; individual points; per-bin n).
-- Excel: `binned_locomotion_summary_<bin>min.xlsx` with `Bin`, `SHAM_Mean/SEM/N`, `STIM_Mean/SEM/N`.
+- Figure: `binned_locomotion_<bin>min.(png|eps)` (mean ± SEM per bin; SHAM vs STIM; individual points; per-bin n).
+- Spreadsheet: `binned_locomotion_summary_<bin>min.(csv|xlsx)` with `Bin`, `SHAM_Mean/SEM/N`, `STIM_Mean/SEM/N`.
 - Console: per-group totals (mean ± SEM, range) and average per-bin distance.
 
 Notes:
