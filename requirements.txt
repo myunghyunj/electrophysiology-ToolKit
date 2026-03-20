@@ -4,3 +4,4 @@ scipy
 opencv-python
 h5py
 tqdm
+openpyxl
