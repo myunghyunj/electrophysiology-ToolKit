@@ -125,7 +125,7 @@ This generates:
 Create video visualizations of EEG signals:
 
 ```bash
-cd '3. EEG Monitor (200 dpi, 30 fps for Fs=1000Hz)'
+cd '3. EEG Monitor (1600 dpi, 30 fps for Fs=1000Hz)'
 
 # For adaptive scaling
 python final.py
@@ -236,7 +236,7 @@ tFUS-EEG-ToolKit/
 │   ├── tFUS_EventAnalyzer_final.m   # Main temporal analysis
 │   ├── plotTemporalPSDmap.m         # Visualization function
 │   └── analysis/output/             # Results directory
-├── 3. EEG Monitor (200 dpi, 30 fps for Fs=1000Hz)/
+├── 3. EEG Monitor (1600 dpi, 30 fps for Fs=1000Hz)/
 │   ├── final.py                     # Adaptive scaling video
 │   └── final_fixed5000uv.py         # Fixed scaling video
 └── 4. Locomotion Analysis Tools/
