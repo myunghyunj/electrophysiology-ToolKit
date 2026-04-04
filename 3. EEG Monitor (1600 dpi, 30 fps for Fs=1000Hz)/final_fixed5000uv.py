@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import matplotlib
 from scipy import io
 from scipy.signal import butter, filtfilt
-import cv2
 import os
 from tqdm import tqdm
 import glob
@@ -60,7 +59,18 @@ def calculate_scale_positions(signal_min, signal_max, target_bottom, target_top,
     
     return np.array(scale_positions), np.array(scale_values)
 
+def _require_cv2():
+    try:
+        import cv2  # type: ignore
+    except Exception as exc:
+        raise RuntimeError(
+            "OpenCV (cv2) is required for video rendering. Install opencv-python and system GL runtime (e.g., libGL)."
+        ) from exc
+    return cv2
+
+
 def create_eeg_video(mat_file, out_file='eeg_video.mp4', window_size=6, fps=30, adaptive_scale=True):
+    cv2 = _require_cv2()
     print(f"Loading data from {mat_file}...")
     
     # Try to determine if file is v7.3 format

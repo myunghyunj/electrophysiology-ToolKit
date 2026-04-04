@@ -7,13 +7,16 @@ on:
 jobs:
   smoke:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - run: python -m pip install --upgrade pip
       - run: pip install -r requirements.txt
@@ -43,3 +46,14 @@ jobs:
 
       - run: test -f /tmp/temporal_py_smoke/temporal_peak_raw_data.csv
       - run: test -f /tmp/temporal_py_smoke/temporal_peak_raw_data.xlsx
+
+      - run: |
+          python tests/generate_synthetic_dlc_csv.py
+          python "4. Locomotion Analysis Tools/locomotion_analysis.py" preprocess /tmp/locomotion_synthetic --output-dir /tmp/locomotion_py_smoke
+          python "4. Locomotion Analysis Tools/locomotion_analysis.py" analyze /tmp/locomotion_py_smoke --mm-per-pix 0.533 --bin-size-min 2.5 --output-dir /tmp/locomotion_py_smoke
+
+      - run: test -f /tmp/locomotion_py_smoke/mouse_SHAM_head_head_tracking_3fps.csv
+      - run: test -f /tmp/locomotion_py_smoke/mouse_STIM_head_head_tracking_3fps.xlsx
+      - run: test -f /tmp/locomotion_py_smoke/mouse_SHAM_head_head_analysis_3fps.png
+      - run: test -f /tmp/locomotion_py_smoke/binned_locomotion_2.5min.png
+      - run: test -f /tmp/locomotion_py_smoke/binned_locomotion_summary_2.5min.csv

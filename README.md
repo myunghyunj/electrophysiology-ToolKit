@@ -1,7 +1,7 @@
 # Electrophysiology (EEG)-ToolKit
 
 [![MATLAB R2018b+](https://img.shields.io/badge/MATLAB-R2018b+-orange.svg)](https://www.mathworks.com/products/matlab.html)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 ### This repository was used in this work [(IEEE TNSRE, 2025)](https://ieeexplore.ieee.org/abstract/document/11230828/)
@@ -34,6 +34,8 @@ This toolkit provides a complete pipeline for processing and analyzing EEG recor
 - Statistics and Machine Learning Toolbox *
 
 #### Python Requirements
+- Python 3.11 or newer
+
 Install the Python dependencies with:
 ```bash
 pip install -r requirements.txt
@@ -133,6 +135,14 @@ python final.py
 
 # For fixed ±5000 µV scaling
 python final_fixed5000uv.py
+```
+
+Local smoke test for video renderer (small/fast run):
+
+```bash
+python '3. EEG Monitor (1600 dpi, 30 fps for Fs=1000Hz)/final.py' \
+  '_EEG:EMG Dataset (STIM, SHAM 1ea each)/example_STIM_A.mat' \
+  --window 1 --fps 2 --output /tmp/eeg_video_smoke.mp4
 ```
 
 ### 4.5 Unified Python CLI launcher

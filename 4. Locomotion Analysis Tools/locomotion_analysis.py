@@ -206,6 +206,20 @@ def read_tracking_table(file: Path) -> list[dict[str, float]]:
     raise ValueError(f'Unsupported tracking table or missing openpyxl support: {file}')
 
 
+
+
+def unique_tracking_files(files: list[Path]) -> list[Path]:
+    preferred: dict[str, Path] = {}
+    for file in files:
+        key = file.stem
+        existing = preferred.get(key)
+        if existing is None:
+            preferred[key] = file
+            continue
+        if existing.suffix.lower() == '.csv' and file.suffix.lower() in {'.xlsx', '.xls'}:
+            preferred[key] = file
+    return list(preferred.values())
+
 def build_binned_animals(files: list[Path], bin_size_min: float, mm_per_pix: float) -> tuple[list[BinnedAnimal], int]:
     animals: list[BinnedAnimal] = []
     max_bins = 0
@@ -349,6 +363,7 @@ def main() -> None:
             print(f'{result.basename}: total distance={result.total_distance_pixels:.2f} px, total time={result.total_time_sec:.2f} s, avg speed={result.avg_speed_pixels_per_sec:.2f} px/s, max speed={result.max_speed_pixels_per_sec:.2f} px/s')
         return
     files = discover_inputs(args.inputs, ('*_head_tracking_3fps.csv', '*_head_tracking_3fps.xlsx', '*.csv', '*.xlsx'))
+    files = unique_tracking_files(files)
     if not files:
         raise SystemExit('No tracking outputs found.')
     sham_files = [file for file in files if 'SHAM' in file.name.upper()]
