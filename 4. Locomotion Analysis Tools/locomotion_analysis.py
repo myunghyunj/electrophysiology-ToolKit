@@ -323,6 +323,22 @@ def print_group_summary(animals: list[BinnedAnimal], group_name: str, bin_size_m
     print(f'  average distance per {bin_size_min:g}-min bin = {mean_bins.mean():.1f} ± {sample_sem(mean_bins):.1f} mm')
 
 
+
+
+def unique_tracking_files(files: list[Path]) -> list[Path]:
+    preferred: dict[str, Path] = {}
+    for file in sorted(files):
+        key = file.stem
+        if key.endswith('_head_tracking_3fps'):
+            key = key[:-len('_head_tracking_3fps')]
+        current = preferred.get(key)
+        if current is None:
+            preferred[key] = file
+            continue
+        if current.suffix.lower() != '.xlsx' and file.suffix.lower() == '.xlsx':
+            preferred[key] = file
+    return list(preferred.values())
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Python CLI for locomotion preprocessing and analysis')
     subparsers = parser.add_subparsers(dest='command', required=True)
@@ -349,6 +365,7 @@ def main() -> None:
             print(f'{result.basename}: total distance={result.total_distance_pixels:.2f} px, total time={result.total_time_sec:.2f} s, avg speed={result.avg_speed_pixels_per_sec:.2f} px/s, max speed={result.max_speed_pixels_per_sec:.2f} px/s')
         return
     files = discover_inputs(args.inputs, ('*_head_tracking_3fps.csv', '*_head_tracking_3fps.xlsx', '*.csv', '*.xlsx'))
+    files = unique_tracking_files(files)
     if not files:
         raise SystemExit('No tracking outputs found.')
     sham_files = [file for file in files if 'SHAM' in file.name.upper()]

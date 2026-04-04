@@ -1,7 +1,7 @@
 numpy
 matplotlib
 scipy
-opencv-python
+opencv-python-headless
 h5py
 tqdm
 openpyxl

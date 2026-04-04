@@ -7,13 +7,17 @@ on:
 jobs:
   smoke:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.13"]
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - run: python -m pip install --upgrade pip
       - run: pip install -r requirements.txt
@@ -43,3 +47,35 @@ jobs:
 
       - run: test -f /tmp/temporal_py_smoke/temporal_peak_raw_data.csv
       - run: test -f /tmp/temporal_py_smoke/temporal_peak_raw_data.xlsx
+
+      - run: |
+          python tests/generate_smoke_inputs.py \
+            --dlc-csv /tmp/locomotion_smoke/SHAM_synthetic.csv \
+            --eeg-mat /tmp/eeg_video_smoke/synthetic.mat
+
+      - run: |
+          python "4. Locomotion Analysis Tools/locomotion_analysis.py" \
+            preprocess /tmp/locomotion_smoke/SHAM_synthetic.csv \
+            --output-dir /tmp/locomotion_py_smoke
+
+      - run: |
+          python "4. Locomotion Analysis Tools/locomotion_analysis.py" \
+            analyze /tmp/locomotion_py_smoke \
+            --mm-per-pix 0.533 \
+            --bin-size-min 2.5 \
+            --output-dir /tmp/locomotion_py_smoke
+
+      - run: test -f /tmp/locomotion_py_smoke/SHAM_synthetic_head_tracking_3fps.csv
+      - run: test -f /tmp/locomotion_py_smoke/SHAM_synthetic_head_tracking_3fps.xlsx
+      - run: test -f /tmp/locomotion_py_smoke/binned_locomotion_2.5min.png
+      - run: test -f /tmp/locomotion_py_smoke/binned_locomotion_summary_2.5min.csv
+      - run: test -f /tmp/locomotion_py_smoke/binned_locomotion_summary_2.5min.xlsx
+
+      - run: |
+          python "3. EEG Monitor (1600 dpi, 30 fps for Fs=1000Hz)/final.py" \
+            /tmp/eeg_video_smoke/synthetic.mat \
+            --fps 5 \
+            --window 1 \
+            --output /tmp/eeg_video_smoke/synthetic.mp4
+
+      - run: test -f /tmp/eeg_video_smoke/synthetic.mp4
